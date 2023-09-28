@@ -22,20 +22,21 @@ export class AuthController {
 
   @Post('signup')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  createUser(@Body() user: CreateUser) {
-    const newUser = this.authService.signUp(user.username, user.password);
+  async createUser(@Body() user: CreateUser) {
+    const newUser = await this.authService.signUp(user.username, user.password);
     return {
       message: 'user created successfully',
       user: {
         username: newUser.username,
+        token: newUser.token,
       },
     };
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(@Body() signInDto: Record<string, any>) {
-    const user = this.authService.signIn(
+  async login(@Body() signInDto: Record<string, any>) {
+    const user = await this.authService.signIn(
       signInDto.username,
       signInDto.password,
     );
@@ -43,6 +44,7 @@ export class AuthController {
       message: 'User logged in successfully',
       user: {
         username: user.username,
+        token: user.token,
       },
     };
   }
